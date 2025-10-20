@@ -94,7 +94,7 @@ cleanup:
         for (size_t i = 0; i < threads_count; ++i)
             total_count += results[i].result;
 
-        result = (mcResultd){elapsed_ms, 4.0 * total_count / tries};
+        result = (mcResultd){elapsed_ms, radius * radius * 4.0 * total_count / tries};
     }
 
     free(results);
