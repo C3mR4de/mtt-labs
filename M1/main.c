@@ -8,8 +8,10 @@ int main(const int argc, const char* const argv[])
     CLEANUP_IF(argc == 1 || argc > 3, "Wrong args count!");
 
     char* endptr;
-    long tries = strtol(argv[1], &endptr, 10), seed = 0;
+    const long tries = strtol(argv[1], &endptr, 10);
     CLEANUP_IF(*endptr != '\0' || tries <= 0, "Wrong tries count!");
+
+    long seed = 0;
 
     if (argc == 3)
     {
