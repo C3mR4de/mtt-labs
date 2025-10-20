@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <threads.h>
+#include <time.h>
 #include "Cleanup.h"
 #include "MT19937.h"
 
@@ -52,6 +53,9 @@ mcResultd MonteCarlo_Calculate(const unsigned long radius, const unsigned long t
     MT19937 generator;
     MT19937_Init(&generator, seed);
 
+    struct timespec start_time, end_time;
+    timespec_get(&start_time, TIME_UTC);
+
     for (size_t i = 0; i < threads_count - 1; ++i)
     {
         results[i] = (mcParams)
@@ -81,12 +85,16 @@ cleanup:
 
     if (created_threads_count == threads_count - 1)
     {
+        timespec_get(&end_time, TIME_UTC);
+        const double elapsed_ms = (end_time.tv_sec  - start_time.tv_sec) * 1000.0
+                                + (end_time.tv_nsec - start_time.tv_nsec) / 1.0e6;
+
         size_t total_count = 0;
 
         for (size_t i = 0; i < threads_count; ++i)
             total_count += results[i].result;
 
-        result = (mcResultd){0, 4.0 * total_count / tries};
+        result = (mcResultd){elapsed_ms, 4.0 * total_count / tries};
     }
 
     free(results);
