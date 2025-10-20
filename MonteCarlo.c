@@ -16,13 +16,14 @@ static int __MonteCarlo_Generate(void* const args)
 {
     mcParams* const params = (mcParams*)args;
 
-    MT19937_Srand(params->seed);
+    MT19937 generator;
+    MT19937_Init(&generator, params->seed);
     size_t count = 0;
 
     for (unsigned long i = 0; i < params->tries; ++i)
     {
-        const double x = MT19937_RandRange(0, params->radius);
-        const double y = MT19937_RandRange(0, params->radius);
+        const double x = MT19937_RandRange(&generator, 0, params->radius);
+        const double y = MT19937_RandRange(&generator, 0, params->radius);
 
         count += (x * x + y * y <= (double)params->radius * params->radius);
     }
@@ -46,7 +47,9 @@ mcResultd MonteCarlo_Calculate(const unsigned long radius, const unsigned long t
     CLEANUP_IF(!results, "Error allocating memory for results!");
 
     size_t created_threads_count = 0;
-    MT19937_Srand(seed);
+
+    MT19937 generator;
+    MT19937_Init(&generator, seed);
 
     for (size_t i = 0; i < threads_count - 1; ++i)
     {
@@ -54,7 +57,7 @@ mcResultd MonteCarlo_Calculate(const unsigned long radius, const unsigned long t
         {
             .radius = radius,
             .tries  = tries / threads_count,
-            .seed   = MT19937_Rand()
+            .seed   = MT19937_Rand(&generator)
         };
 
         CLEANUP_IF(thrd_create(threads + i, __MonteCarlo_Generate, results + i) != thrd_success, "Error creating thread!");
@@ -65,7 +68,7 @@ mcResultd MonteCarlo_Calculate(const unsigned long radius, const unsigned long t
     {
         .radius = radius,
         .tries  = tries - (tries / threads_count) * (threads_count - 1),
-        .seed   = MT19937_Rand()
+        .seed   = MT19937_Rand(&generator)
     };
 
     __MonteCarlo_Generate(results + threads_count - 1);
