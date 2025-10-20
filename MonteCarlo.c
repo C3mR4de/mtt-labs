@@ -17,7 +17,6 @@ static int __MonteCarlo_Generate(void* const args)
     mcParams* const params = (mcParams*)args;
 
     MT19937_Srand(params->seed);
-
     size_t count = 0;
 
     for (unsigned long i = 0; i < params->tries; ++i)
@@ -47,17 +46,28 @@ mcResultd MonteCarlo_Calculate(const unsigned long radius, const unsigned long t
     CLEANUP_IF(!results, "Error allocating memory for results!");
 
     size_t created_threads_count = 0;
-
     MT19937_Srand(seed);
 
     for (size_t i = 0; i < threads_count - 1; ++i)
     {
-        results[i] = (mcParams){radius, tries / threads_count, MT19937_Rand(), 0};
+        results[i] = (mcParams)
+        {
+            .radius = radius,
+            .tries  = tries / threads_count,
+            .seed   = MT19937_Rand()
+        };
+
         CLEANUP_IF(thrd_create(threads + i, __MonteCarlo_Generate, results + i) != thrd_success, "Error creating thread!");
         ++created_threads_count;
     }
 
-    results[threads_count - 1] = (mcParams){radius, tries - (tries / threads_count) * (threads_count - 1), MT19937_Rand(), 0};
+    results[threads_count - 1] = (mcParams)
+    {
+        .radius = radius,
+        .tries  = tries - (tries / threads_count) * (threads_count - 1),
+        .seed   = MT19937_Rand()
+    };
+
     __MonteCarlo_Generate(results + threads_count - 1);
 
 cleanup:
@@ -72,7 +82,7 @@ cleanup:
         for (size_t i = 0; i < threads_count; ++i)
             total_count += results[i].result;
 
-        result = (mcResultd){4 * (double)total_count / tries, 0};
+        result = (mcResultd){4.0 * total_count / tries, 0};
     }
 
     free(results);
