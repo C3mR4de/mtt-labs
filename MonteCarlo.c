@@ -18,6 +18,7 @@ static int __MonteCarlo_Generate(void* const args)
 
     MT19937 generator;
     MT19937_Init(&generator, params->seed);
+
     size_t count = 0;
 
     for (unsigned long i = 0; i < params->tries; ++i)
@@ -85,7 +86,7 @@ cleanup:
         for (size_t i = 0; i < threads_count; ++i)
             total_count += results[i].result;
 
-        result = (mcResultd){4.0 * total_count / tries, 0};
+        result = (mcResultd){0, 4.0 * total_count / tries};
     }
 
     free(results);

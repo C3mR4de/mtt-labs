@@ -63,6 +63,6 @@ double MT19937_RandRange(MT19937* const gen, const double a, const double b)
     if (a >= b)
         return a;
 
-    double r = MT19937_Rand(gen) / 4294967296.0;
+    double r = MT19937_Rand(gen) / (double)((unsigned long)~0);
     return a + r * (b - a);
 }

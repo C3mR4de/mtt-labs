@@ -26,7 +26,7 @@ int main(const int argc, const char* const argv[])
         mcResultd result = MonteCarlo_Calculate(radius, threads_count, tries, seed);
         CLEANUP_IF(result.area == 0, "Error while processing!");
 
-        printf("%f %f\n", result.area, result.elapsed_time);
+        printf("%f %f\n", result.elapsed_time, result.area);
     }
 
     exit_code = EXIT_SUCCESS;
