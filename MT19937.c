@@ -1,5 +1,6 @@
 #include "MT19937.h"
 #include <threads.h>
+#include <stdint.h>
 
 #define MT_M          397
 #define MT_MATRIX_A   0x9908B0DFUL
@@ -62,6 +63,6 @@ double MT19937_RandRange(MT19937* const gen, const double a, const double b)
     if (a >= b)
         return a;
 
-    double r = MT19937_Rand(gen) * (1.0 / (double)((unsigned long)~0));
+    double r = MT19937_Rand(gen) / 4294967296.0;
     return a + r * (b - a);
 }
