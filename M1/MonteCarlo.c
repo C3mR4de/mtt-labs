@@ -8,8 +8,8 @@
 
 typedef struct
 {
-    unsigned long radius, tries, seed;
-    size_t result;
+    uint32_t radius, tries, seed;
+    size_t   result;
 }
 mcParams;
 
@@ -22,7 +22,7 @@ static int __MonteCarlo_Generate(void* const args)
 
     size_t count = 0;
 
-    for (unsigned long i = 0; i < params->tries; ++i)
+    for (uint32_t i = 0; i < params->tries; ++i)
     {
         const double x = MT19937_RandRange(&generator, 0, params->radius);
         const double y = MT19937_RandRange(&generator, 0, params->radius);
@@ -34,7 +34,7 @@ static int __MonteCarlo_Generate(void* const args)
     return EXIT_SUCCESS;
 }
 
-mcResultd MonteCarlo_Calculate(const unsigned long radius, const unsigned long threads_count, const unsigned long tries, const unsigned long seed)
+mcResultd MonteCarlo_Calculate(const uint32_t radius, const uint32_t threads_count, const uint32_t tries, const uint32_t seed)
 {
     assert(radius > 0 && threads_count > 0);
     mcResultd result = {0, 0};

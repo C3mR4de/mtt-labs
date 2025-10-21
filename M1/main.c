@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <inttypes.h>
 #include "MonteCarlo.h"
 #include "Cleanup.h"
 
@@ -19,9 +20,9 @@ int main(const int argc, const char* const argv[])
         CLEANUP_IF(*endptr != '\0' || seed < 0, "Wrong seed!");
     }
 
-    long radius, threads_count;
+    int64_t radius, threads_count;
 
-    while (scanf("%ld %ld", &radius, &threads_count) == 2)
+    while (scanf("%" SCNd64 "%" SCNd64, &radius, &threads_count) == 2)
     {
         CLEANUP_IF(radius <= 0 || threads_count <= 0, "Wrong input data!");
 
